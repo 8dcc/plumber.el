@@ -58,7 +58,9 @@ start of the list should be more strict than the ones at the end."
 If the region is active, use the region text. Otherwise, prompt for a string."
   (if (region-active-p)
       (buffer-substring-no-properties (region-beginning) (region-end))
-    (read-string "Plumb: " nil 'plumber-history (thing-at-point 'symbol t))))
+    (let ((pointing-at (thing-at-point 'symbol 'no-properties)))
+      (read-string (format-prompt "Plumb" pointing-at)
+                   nil 'plumber-history pointing-at))))
 
 (defun plumber-prompt-data-type ()
   "Prompt for a data type in `plumber-alist'."
