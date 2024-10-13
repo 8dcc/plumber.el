@@ -52,15 +52,26 @@ start of the list should be more strict than the ones at the end."
 (defvar plumber-history nil
   "History of plumbed strings.")
 
+(defun plumber-thing-at-point ()
+  "Get a string representing the next space-delimited word. This function only
+considers spaces, tabs and newlines as \"spaces\"."
+  (ignore-errors
+    (save-excursion
+      (re-search-backward "^\\|[\t\n ]")
+      (re-search-forward "[^\t\n ]+")
+      (let ((thing-start (match-beginning 0))
+            (thing-end (match-end 0)))
+        (buffer-substring-no-properties thing-start thing-end)))))
+
 (defun plumber-get-user-text ()
   "Get a string for plumbing.
 
 If the region is active, use the region text. Otherwise, prompt for a string."
   (if (region-active-p)
       (buffer-substring-no-properties (region-beginning) (region-end))
-    (let ((pointing-at (thing-at-point 'symbol 'no-properties)))
-      (read-string (format-prompt "Plumb" pointing-at)
-                   nil 'plumber-history pointing-at))))
+    (let ((thing-at-point (plumber-thing-at-point)))
+      (read-string (format-prompt "Plumb" thing-at-point)
+                   nil 'plumber-history thing-at-point))))
 
 (defun plumber-prompt-data-type ()
   "Prompt for a data type in `plumber-alist'."
