@@ -1,0 +1,49 @@
+#+TITLE: plumber.el
+#+AUTHOR: 8dcc
+#+OPTIONS: toc:2
+#+STARTUP: nofold
+
+*Run different commands depending on the text format.*
+
+This simple package is an Emacs port of my [[https://github.com/8dcc/plumber][plumber]] command, inspired by the
+[[https://st.suckless.org/patches/right_click_to_plumb/][right click to plumb]] patch for the [[https://st.suckless.org/][Simple Terminal]], which was inspired by
+[[https://9p.io/wiki/plan9/using_plumbing/index.html][Plan9's plumber]].
+
+In short, it allows the user to call a different function depending on the
+format of the supplied text. For example, plumbing a URL might call the
+=browse-url= function, plumbing the text =printf(3)= might call the =man= function,
+and plumbing a path might open it in =dired=. Of course, the text formats can be
+configured by the user.
+
+* Usage
+
+You can plumb text with the =plumber-plumb= function, which tries to match the
+supplied text against a list of regular expressions; and the =plumber-plumb-as=
+function, which lets the user specify the data type.
+
+Both of these functions check their inputs against the =plumber-alist= variable,
+which has the following format:
+
+#+begin_src emacs-lisp
+((TYPE REGEXP FUNC)
+ ...
+ (TYPE REGEXP FUNC))
+#+end_src
+
+Where =type= is a short description of the entry, =regexp= is the regular expression
+used by =plumber-plumb=, and =func= is the function to be called by =plumber-plumb=
+and =plumber-plumb-as= if a match is found.
+
+By default, both functions use the region contents, or they ask the for the text
+to plumb. The =plumber-plumb-as= function also asks the user for a type in the
+=plumber-alist= list.
+
+* Installing
+
+This package is not currently on Melpa. If you are using [[https://github.com/radian-software/straight.el][straight.el]], you can
+install it using =straight-use-package=:
+
+#+begin_src emacs-lisp
+(straight-use-package
+ '(plumber :type git :host github :repo "8dcc/plumber.el"))
+#+end_src
