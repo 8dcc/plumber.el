@@ -40,8 +40,14 @@ to plumb. The =plumber-plumb-as= function also asks the user for a type in the
 
 * Installing
 
-This package is not currently on Melpa. If you are using [[https://github.com/radian-software/straight.el][straight.el]], you can
-install it using =straight-use-package=:
+This package is not currently on Melpa. You can install it with
+=package-vc-install=:
+
+#+begin_src emacs-lisp
+(package-vc-install "https://github.com/8dcc/plumber.el")
+#+end_src
+
+Or, if you are using [[https://github.com/radian-software/straight.el][straight.el]], you can install it using =straight-use-package=:
 
 #+begin_src emacs-lisp
 (straight-use-package
