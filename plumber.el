@@ -91,8 +91,8 @@ any specific format."
 considers spaces, tabs and newlines as \"spaces\"."
   (ignore-errors
     (save-excursion
-      (re-search-backward "^\\|[\t\n ]")
-      (re-search-forward "[^\t\n ]+")
+      (re-search-backward "^\\|[[:blank:]]")
+      (re-search-forward "[^[:blank:]\n]+")
       (let ((thing-start (match-beginning 0))
             (thing-end (match-end 0)))
         (buffer-substring-no-properties thing-start thing-end)))))
