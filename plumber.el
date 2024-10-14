@@ -35,9 +35,21 @@
   :group 'convenience)
 
 (defcustom plumber-alist
-  '(("URL"      "https?://.+"                  browse-url)
-    ("Man page" "[[:alnum:][:punct:]]+([0-9])" man)
-    ("File"     "\\w+\\.\\w+"                  find-file))
+  '(("URL"
+     "https?://.+"
+     browse-url)
+    ("Mail address"
+     "[[:alnum:]._-+]+@[[:alnum:]-]+\\.[[:alnum:]-.]+"
+     compose-mail)
+    ("Man page"
+     "[[:alnum:][:punct:]]+([0-9])"
+     man)
+    ("Elisp code"
+     "([[:print:]]+)"
+     (lambda (input) (eval-expression (read input))))
+    ("File"
+     "[[:graph:]]+"
+     find-file))
   "List of elements (TYPE REGEXP FUNC) used for plumbing.
 
 FUNC is the function that should be called whenever the user is plumbing a text
