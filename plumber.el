@@ -43,7 +43,7 @@
      "https?://.+"
      browse-url)
     ("Mail address"
-     "[[:alnum:]._-+]+@[[:alnum:]-]+\\.[[:alnum:]-.]+"
+     "[[:alnum:]._+-]+@[[:alnum:]-]+\\.[[:alnum:].-]+"
      compose-mail)
     ("Man page"
      "[[:alnum:][:punct:]]+([0-9])"
