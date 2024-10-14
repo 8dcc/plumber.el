@@ -63,7 +63,7 @@
      (lambda (input)
        (message "Result: %s" (calc-eval input))))
     ("File"
-     "[[:graph:]]+"
+     "\\([[:alnum:]/~._+-]\\|\\\\ \\)+"
      find-file))
   "List of elements (NAME REGEXP FUNCTION) used for plumbing.
 
