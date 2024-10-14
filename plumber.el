@@ -48,9 +48,16 @@
     ("Man page"
      "[[:alnum:][:punct:]]+([0-9])"
      man)
-    ("Elisp code"
+    ("Elisp expression"
      "([[:print:]]+)"
-     (lambda (input) (eval-expression (read input))))
+     (lambda (input)
+       (eval-expression (read input))))
+    ("Elisp symbol"
+     "`[[:alnum:]_.:%?=/*+-]+'"
+     (lambda (input)
+       (if (string-match-p "^`.*'$" input)
+           (setq input (substring input 1 -1)))
+       (describe-symbol (intern input))))
     ("File"
      "[[:graph:]]+"
      find-file))
