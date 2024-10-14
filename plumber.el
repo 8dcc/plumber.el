@@ -37,6 +37,7 @@
   :group 'convenience
   :prefix "plumber-")
 
+;;;###autoload
 (defcustom plumber-alist
   '(("URL"
      "https?://.+"
@@ -63,8 +64,7 @@ The regular expressions will be checked in order, therefore expressions at the
 start of the list should be more strict than the ones at the end. Also note that
 the regular expressions will be wrapped in \"^...$\", so a full match is
 expected."
-  :type '(alist :key-type string :value-type (list string function))
-  :safe t)
+  :type '(alist :key-type string :value-type (list string function)))
 
 (defvar plumber-history nil
   "History of plumbed strings.")
