@@ -58,6 +58,10 @@
        (if (string-match-p "^`.*'$" input)
            (setq input (substring input 1 -1)))
        (describe-symbol (intern input))))
+    ("Math"
+     "[[:digit:]]+\\([[:blank:]]*[&%^/*+-][[:blank:]]*[[:digit:]]\\)+"
+     (lambda (input)
+       (message "Result: %s" (calc-eval input))))
     ("File"
      "[[:graph:]]+"
      find-file))
