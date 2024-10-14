@@ -64,13 +64,19 @@
   "List of elements (TYPE REGEXP FUNC) used for plumbing.
 
 FUNC is the function that should be called whenever the user is plumbing a text
-matching REGEXP. The function should receive one argument: the plumbed text. The
-TYPE value will be used by `plumber-plumb-as'.
+that matches REGEXP. The function should receive one string argument: the text
+being plumbed. The TYPE should be a short description, used by
+`plumber-plumb-as'.
 
 The regular expressions will be checked in order, therefore expressions at the
 start of the list should be more strict than the ones at the end. Also note that
-the regular expressions will be wrapped in \"^...$\", so a full match is
-expected."
+there is no need to wrap the regular expressions in \"^...$\", since this is
+done internally by `plumber-plumb'.
+
+Also note that, even though `plumber-plumb' ensures that the input matches the
+REGEXP, `plumber-plumb-as' completely ignores it. This means that the specified
+FUNC is guaranteed to receive a string as its argument, but it should not expect
+any specific format."
   :type '(alist :key-type string :value-type (list string function)))
 
 (defvar plumber-history nil
