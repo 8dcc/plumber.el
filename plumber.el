@@ -38,7 +38,7 @@
   :prefix "plumber-")
 
 ;;;###autoload
-(defcustom plumber-alist
+(defcustom plumber-rules
   '(("URL"
      "https?://.+"
      browse-url)
@@ -65,12 +65,12 @@
     ("File"
      "[[:graph:]]+"
      find-file))
-  "List of elements (TYPE REGEXP FUNC) used for plumbing.
+  "List of elements (NAME REGEXP FUNCTION) used for plumbing.
 
-FUNC is the function that should be called whenever the user is plumbing a text
-that matches REGEXP. The function should receive one string argument: the text
-being plumbed. The TYPE should be a short description, used by
-`plumber-plumb-as'.
+Each rule specifies the FUNCTION that should be called whenever the user is
+plumbing a text that matches REGEXP. The function should receive one string
+argument: the text being plumbed. The NAME should be a short description, used
+by the `plumber-plumb-as' function.
 
 The regular expressions will be checked in order, therefore expressions at the
 start of the list should be more strict than the ones at the end. Also note that
@@ -79,8 +79,8 @@ done internally by `plumber-plumb'.
 
 Also note that, even though `plumber-plumb' ensures that the input matches the
 REGEXP, `plumber-plumb-as' completely ignores it. This means that the specified
-FUNC is guaranteed to receive a string as its argument, but it should not expect
-any specific format."
+FUNCTION is guaranteed to receive a string as its argument, but it should not
+expect any specific format."
   :type '(alist :key-type string :value-type (list string function)))
 
 (defvar plumber-history nil
@@ -112,46 +112,47 @@ If the region is active, use the region text. Otherwise, prompt for a string."
       (read-string (format-prompt "Plumb" thing-at-point)
                    nil 'plumber-history thing-at-point))))
 
-(defun plumber-prompt-data-type ()
-  "Prompt for a data type in `plumber-alist'."
-  (completing-read "Data type: " (mapcar #'car plumber-alist) nil t))
+(defun plumber-get-rule-name ()
+  "Prompt for a rule name in `plumber-rules'."
+  (completing-read "Rule: " (mapcar #'car plumber-rules) nil t))
 
-(defun plumber-func-from-type (type)
-  "Get the function associated to TYPE in `plumber-alist'. Returns nil if no
+;; FIXME: Change function order
+(defun plumber-func-from-rule-name (name)
+  "Get the function associated to NAME in `plumber-rules'. Returns nil if no
 match was found."
-  (let ((match(assoc type plumber-alist)))
+  (let ((match (assoc name plumber-rules)))
     (if match
         (caddr match)
       nil)))
 
 (defun plumber-func-from-text (text)
-  "Get the first function in `plumber-alist' whose associated regexp matches
+  "Get the first function in `plumber-rules' whose associated regexp matches
 TEXT. Returns nil if no match was found."
   (let ((match (seq-find
-                ;; Find first matching regexp in `plumber-alist'.
+                ;; Find first matching regexp in `plumber-rules'.
                 (lambda (element)
                   (plumber-string-match-p (cadr element) text))
-                plumber-alist)))
+                plumber-rules)))
     ;; If we found a match, return the function. Otherwise, nil.
     (if match
         (caddr match)
       nil)))
 
 ;;;###autoload
-(defun plumber-plumb-as (text type)
-  "Plumb the specified text as a specific data type.
+(defun plumber-plumb-as (text rule-name)
+  "Plumb the specified TEXT with the rule matching RULE-NAME.
 
-This function is similar to `plumber-plumb', but `plumber-alist' is filtered
-using the \"type\" field, rather than \"regexp\".
+This function is similar to `plumber-plumb', but `plumber-rules' is filtered
+using the \"name\" field, rather than \"regexp\".
 
 When called interactively, the `plumber-get-user-text' function is used for
-obtaining the TEXT argument, and the `plumber-prompt-data-type' function is used
-for obtaining the TYPE argument."
+obtaining the TEXT argument, and the `plumber-get-rule-name' function is used
+for obtaining the RULE-NAME argument."
   (interactive (list (plumber-get-user-text)
-                     (plumber-prompt-data-type)))
-  (let ((func (plumber-func-from-type type)))
+                     (plumber-get-rule-name)))
+  (let ((func (plumber-func-from-rule-name rule-name)))
     (unless func
-      (error "Invalid data type '%s'" type))
+      (error "No plumber rule named '%s'" rule-name))
     (funcall func text)))
 
 ;;;###autoload
@@ -160,16 +161,16 @@ for obtaining the TYPE argument."
 
 The plumbing functionality is based on Plan9's plumber. In Emacs, it simply
 allows you to call a different function depending on the format of the TEXT. It
-checks the format against the regular expressions specified in
-`plumber-alist'. The data type can also be manually specified using the
-`plumber-plumb-as' function.
+checks the format against the regular expressions specified in the
+`plumber-rules' alist. Alternatively, the `plumber-plumb-as' function can also
+be used for manually specifying the plumber rule.
 
 When called interactively, the `plumber-get-user-text' function is used for
 obtaining the TEXT argument."
   (interactive (list (plumber-get-user-text)))
   (let ((func (plumber-func-from-text text)))
     (unless func
-      (error "No plumber regexp matches the specified text"))
+      (error "No plumber rule matches the specified text"))
     (funcall func text)))
 
 (provide 'plumber)
