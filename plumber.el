@@ -45,7 +45,9 @@ matching REGEXP. The function should receive one argument: the plumbed text. The
 TYPE value will be used by `plumber-plumb-as'.
 
 The regular expressions will be checked in order, therefore expressions at the
-start of the list should be more strict than the ones at the end."
+start of the list should be more strict than the ones at the end. Also note that
+the regular expressions will be wrapped in \"^...$\", so a full match is
+expected."
   :group 'plumber
   :type '(alist :key-type string :value-type (list string function))
   :safe t)
@@ -63,6 +65,11 @@ considers spaces, tabs and newlines as \"spaces\"."
       (let ((thing-start (match-beginning 0))
             (thing-end (match-end 0)))
         (buffer-substring-no-properties thing-start thing-end)))))
+
+(defun plumber-string-match-p (regexp string)
+  "Return true if STRING matches the REGEXP, from start to end. Uses
+`string-match-p'."
+  (string-match-p (concat "^" regexp "$") string))
 
 (defun plumber-get-user-text ()
   "Get a string for plumbing.
@@ -92,7 +99,7 @@ TEXT. Returns nil if no match was found."
   (let ((match (seq-find
                 ;; Find first matching regexp in `plumber-alist'.
                 (lambda (element)
-                  (string-match-p (cadr element) text))
+                  (plumber-string-match-p (cadr element) text))
                 plumber-alist)))
     ;; If we found a match, return the function. Otherwise, nil.
     (if match
