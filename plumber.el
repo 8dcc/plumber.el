@@ -86,6 +86,9 @@ expect any specific format."
 (defvar plumber-history nil
   "History of plumbed strings.")
 
+;;------------------------------------------------------------------------------
+;; Auxiliary functions
+
 (defun plumber-thing-at-point ()
   "Get a string representing the next space-delimited word. This function only
 considers spaces, tabs and newlines as \"spaces\"."
@@ -102,6 +105,9 @@ considers spaces, tabs and newlines as \"spaces\"."
 `string-match-p'."
   (string-match-p (concat "^" regexp "$") string))
 
+;;------------------------------------------------------------------------------
+;; Functions for obtaining user data
+
 (defun plumber-get-user-text ()
   "Get a string for plumbing.
 
@@ -116,14 +122,8 @@ If the region is active, use the region text. Otherwise, prompt for a string."
   "Prompt for a rule name in `plumber-rules'."
   (completing-read "Rule: " (mapcar #'car plumber-rules) nil t))
 
-;; FIXME: Change function order
-(defun plumber-func-from-rule-name (name)
-  "Get the function associated to NAME in `plumber-rules'. Returns nil if no
-match was found."
-  (let ((match (assoc name plumber-rules)))
-    (if match
-        (caddr match)
-      nil)))
+;;------------------------------------------------------------------------------
+;; Functions for searching in `plumber-rules'
 
 (defun plumber-func-from-text (text)
   "Get the first function in `plumber-rules' whose associated regexp matches
@@ -138,22 +138,16 @@ TEXT. Returns nil if no match was found."
         (caddr match)
       nil)))
 
-;;;###autoload
-(defun plumber-plumb-as (text rule-name)
-  "Plumb the specified TEXT with the rule matching RULE-NAME.
+(defun plumber-func-from-rule-name (name)
+  "Get the function associated to NAME in `plumber-rules'. Returns nil if no
+match was found."
+  (let ((match (assoc name plumber-rules)))
+    (if match
+        (caddr match)
+      nil)))
 
-This function is similar to `plumber-plumb', but `plumber-rules' is filtered
-using the \"name\" field, rather than \"regexp\".
-
-When called interactively, the `plumber-get-user-text' function is used for
-obtaining the TEXT argument, and the `plumber-get-rule-name' function is used
-for obtaining the RULE-NAME argument."
-  (interactive (list (plumber-get-user-text)
-                     (plumber-get-rule-name)))
-  (let ((func (plumber-func-from-rule-name rule-name)))
-    (unless func
-      (error "No plumber rule named '%s'" rule-name))
-    (funcall func text)))
+;;------------------------------------------------------------------------------
+;; Interactive functions
 
 ;;;###autoload
 (defun plumber-plumb (text)
@@ -171,6 +165,23 @@ obtaining the TEXT argument."
   (let ((func (plumber-func-from-text text)))
     (unless func
       (error "No plumber rule matches the specified text"))
+    (funcall func text)))
+
+;;;###autoload
+(defun plumber-plumb-as (text rule-name)
+  "Plumb the specified TEXT with the rule matching RULE-NAME.
+
+This function is similar to `plumber-plumb', but `plumber-rules' is filtered
+using the \"name\" field, rather than \"regexp\".
+
+When called interactively, the `plumber-get-user-text' function is used for
+obtaining the TEXT argument, and the `plumber-get-rule-name' function is used
+for obtaining the RULE-NAME argument."
+  (interactive (list (plumber-get-user-text)
+                     (plumber-get-rule-name)))
+  (let ((func (plumber-func-from-rule-name rule-name)))
+    (unless func
+      (error "No plumber rule named '%s'" rule-name))
     (funcall func text)))
 
 (provide 'plumber)
