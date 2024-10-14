@@ -30,9 +30,12 @@
 
 ;;; Code:
 
-(defgroup plumber ()
+(defgroup plumber nil
   "Run different commands depending on the text format"
-  :group 'convenience)
+  :link '(url-link :tag "Homepage" "https://github.com/8dcc/plumber.el")
+  :link '(emacs-library-link :tag "Library Source" "plumber.el")
+  :group 'convenience
+  :prefix "plumber-")
 
 (defcustom plumber-alist
   '(("URL"
@@ -60,7 +63,6 @@ The regular expressions will be checked in order, therefore expressions at the
 start of the list should be more strict than the ones at the end. Also note that
 the regular expressions will be wrapped in \"^...$\", so a full match is
 expected."
-  :group 'plumber
   :type '(alist :key-type string :value-type (list string function))
   :safe t)
 
