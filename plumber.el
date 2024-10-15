@@ -57,7 +57,11 @@
      (lambda (input)
        (if (string-match-p "^`.*'$" input)
            (setq input (substring input 1 -1)))
-       (describe-symbol (intern input))))
+       (let ((symbol (intern input)))
+         (if (or (boundp symbol)
+                 (fboundp symbol))
+             (describe-symbol symbol)
+           (message "Unbound symbol `%s'" symbol)))))
     ("Math"
      "[[:digit:]]+\\([[:blank:]]*[&%^/*+-][[:blank:]]*[[:digit:]]\\)+"
      (lambda (input)
