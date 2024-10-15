@@ -87,6 +87,17 @@ FUNCTION is guaranteed to receive a string as its argument, but it should not
 expect any specific format."
   :type '(alist :key-type string :value-type (list string function)))
 
+;;;###autoload
+(defvar plumber-fill-text-prompt t
+  "If non-nil, set the initial input of the text prompt to the thing at point,
+rather than the default value.
+
+Used by `plumber-get-user-text'. The \"thing at point\" is obtained with
+`plumber-thing-at-point'.
+
+For more information on the differences between \"initial input\" and \"default
+value\", see `read-string'.")
+
 (defvar plumber-history nil
   "History of plumbed strings.")
 
@@ -119,8 +130,10 @@ If the region is active, use the region text. Otherwise, prompt for a string."
   (if (region-active-p)
       (buffer-substring-no-properties (region-beginning) (region-end))
     (let ((thing-at-point (plumber-thing-at-point)))
-      (read-string (format-prompt "Plumb" thing-at-point)
-                   nil 'plumber-history thing-at-point))))
+      (if plumber-fill-text-prompt
+          (read-string "Plumb: " thing-at-point 'plumber-history thing-at-point)
+        (read-string (format-prompt "Plumb" thing-at-point)
+                     nil 'plumber-history thing-at-point)))))
 
 (defun plumber-get-rule-name ()
   "Prompt for a rule name in `plumber-rules'."
