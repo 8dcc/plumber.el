@@ -31,7 +31,7 @@
 ;;; Code:
 
 (defgroup plumber nil
-  "Run different commands depending on the text format"
+  "Run different commands depending on the text format."
   :link '(url-link :tag "Homepage" "https://github.com/8dcc/plumber.el")
   :link '(emacs-library-link :tag "Library Source" "plumber.el")
   :group 'convenience
@@ -134,10 +134,8 @@ an error message."
            (target-line (and match1 (string-to-number match1)))
            (match2 (match-string 2 input))
            (target-col (and match2 (string-to-number match2)))
-           (target-file (match-string 3 input))
-           (target-buffer (find-file target-file)))
-      ;; TODO: When is the `target-buffer' not selected?
-      (switch-to-buffer target-buffer)
+           (target-file (match-string 3 input)))
+      (find-file target-file)
       (if target-line
           ;; NOTE: The `goto-line' function can only be used interactively
           (progn
