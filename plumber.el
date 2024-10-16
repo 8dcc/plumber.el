@@ -59,14 +59,7 @@
        (eval-expression (read input))))
     ("Elisp symbol"
      ,(rx "`" (one-or-more (any alnum ?_ ?. ?: ?% ?? ?= ?/ ?* ?+ ?-)) "'")
-     (lambda (input)
-       (if (string-match-p "^`.*'$" input)
-           (setq input (substring input 1 -1)))
-       (let ((symbol (intern input)))
-         (if (or (boundp symbol)
-                 (fboundp symbol))
-             (describe-symbol symbol)
-           (message "Unbound symbol `%s'" symbol)))))
+     plumber-describe-symbol)
     ("Math"
      ,(rx (one-or-more digit)           ; First number
           (one-or-more
@@ -112,6 +105,21 @@ value\", see `read-string'.")
 
 (defvar plumber-history nil
   "History of plumbed strings.")
+
+;;------------------------------------------------------------------------------
+;; Functions used in `plumber-rules', can be overwritten
+
+(defun plumber-describe-symbol (input)
+  "Remove quotes from symbol, and describe it as long as it exists. If not, show
+an error message."
+  (save-match-data
+    (if (string-match "^`\\(.*\\)'$" input)
+        (setq input (match-string 1 input))))
+  (let ((symbol (intern input)))
+    (if (or (boundp symbol)
+            (fboundp symbol))
+        (describe-symbol symbol)
+      (message "Unbound symbol `%s'" symbol))))
 
 ;;------------------------------------------------------------------------------
 ;; Auxiliary functions
