@@ -98,7 +98,7 @@ expect any specific format."
 rather than the default value.
 
 Used by `plumber-get-user-text'. The \"thing at point\" is obtained with
-`plumber-thing-at-point'.
+`plumber--thing-at-point'.
 
 For more information on the differences between \"initial input\" and \"default
 value\", see `read-string'.")
@@ -124,7 +124,7 @@ an error message."
 ;;------------------------------------------------------------------------------
 ;; Auxiliary functions
 
-(defun plumber-thing-at-point ()
+(defun plumber--thing-at-point ()
   "Get a string representing the next space-delimited word. This function only
 considers spaces, tabs and newlines as \"spaces\"."
   (ignore-errors
@@ -135,7 +135,7 @@ considers spaces, tabs and newlines as \"spaces\"."
             (thing-end (match-end 0)))
         (buffer-substring-no-properties thing-start thing-end)))))
 
-(defun plumber-string-match-p (regexp string)
+(defun plumber--string-match-p (regexp string)
   "Return true if STRING matches the REGEXP, from start to end. Uses
 `string-match-p'."
   (string-match-p (concat "^" regexp "$") string))
@@ -149,7 +149,7 @@ considers spaces, tabs and newlines as \"spaces\"."
 If the region is active, use the region text. Otherwise, prompt for a string."
   (if (region-active-p)
       (buffer-substring-no-properties (region-beginning) (region-end))
-    (let ((thing-at-point (plumber-thing-at-point)))
+    (let ((thing-at-point (plumber--thing-at-point)))
       (if plumber-fill-text-prompt
           (read-string "Plumb: " thing-at-point 'plumber-history thing-at-point)
         (read-string (format-prompt "Plumb" thing-at-point)
@@ -168,7 +168,7 @@ TEXT. Returns nil if no match was found."
   (let ((match (seq-find
                 ;; Find first matching regexp in `plumber-rules'.
                 (lambda (element)
-                  (plumber-string-match-p (cadr element) text))
+                  (plumber--string-match-p (cadr element) text))
                 plumber-rules)))
     ;; If we found a match, return the function. Otherwise, nil.
     (if match
