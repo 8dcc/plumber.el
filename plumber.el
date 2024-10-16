@@ -39,21 +39,26 @@
 
 ;;;###autoload
 (defcustom plumber-rules
-  '(("URL"
+  `(("URL"
      "https?://.+"
      browse-url)
     ("Mail address"
-     "[[:alnum:]._+-]+@[[:alnum:]-]+\\.[[:alnum:].-]+"
+     ,(rx (one-or-more (any alnum ?. ?_ ?- ?+))
+          "@"
+          (one-or-more (any alnum ?-))
+          "."
+          (one-or-more (any alnum ?- ?.)))
      compose-mail)
     ("Man page"
-     "[[:alnum:][:punct:]]+([0-9])"
+     ,(rx (one-or-more (any alnum punct))
+          "(" digit ")")
      man)
     ("Elisp expression"
-     "([[:print:]]+)"
+     ,(rx "(" (one-or-more print) ")")
      (lambda (input)
        (eval-expression (read input))))
     ("Elisp symbol"
-     "`[[:alnum:]_.:%?=/*+-]+'"
+     ,(rx "`" (one-or-more (any alnum ?_ ?. ?: ?% ?? ?= ?/ ?* ?+ ?-)) "'")
      (lambda (input)
        (if (string-match-p "^`.*'$" input)
            (setq input (substring input 1 -1)))
@@ -63,11 +68,18 @@
              (describe-symbol symbol)
            (message "Unbound symbol `%s'" symbol)))))
     ("Math"
-     "[[:digit:]]+\\([[:blank:]]*[&%^/*+-][[:blank:]]*[[:digit:]]\\)+"
+     ,(rx (one-or-more digit)           ; First number
+          (one-or-more
+           (zero-or-more blank)
+           (any ?+ ?- ?* ?/ ?^ ?%)      ; Operation
+           (zero-or-more blank)
+           (one-or-more digit)))        ; Other numbers
      (lambda (input)
        (message "Result: %s" (calc-eval input))))
     ("File"
-     "\\([[:alnum:]/~._+-]\\|\\\\ \\)+"
+     ,(rx (one-or-more
+           (or (any alnum ?/ ?~ ?. ?_ ?-)
+               "\\ ")))
      find-file))
   "List of elements (NAME REGEXP FUNCTION) used for plumbing.
 
