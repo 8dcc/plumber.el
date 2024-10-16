@@ -127,8 +127,7 @@ an error message."
   (save-match-data
     (string-match (rx (opt (group-n 1 (one-or-more digit)) ":")
                       (opt (group-n 2 (one-or-more digit)) ":")
-                      (group-n 3 (one-or-more anything))
-                      eol)
+                      (group-n 3 (one-or-more not-newline)))
                   input)
     (let* ((match1 (match-string 1 input))
            (target-line (and match1 (string-to-number match1)))
