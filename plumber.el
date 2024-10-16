@@ -70,10 +70,12 @@
      (lambda (input)
        (message "Result: %s" (calc-eval input))))
     ("File"
-     ,(rx (one-or-more
+     ,(rx (opt (one-or-more digit) ":") ; Line
+          (opt (one-or-more digit) ":") ; Column
+          (one-or-more                  ; Characters of a path
            (or (any alnum ?/ ?~ ?. ?_ ?-)
                "\\ ")))
-     find-file))
+     plumber-find-file))
   "List of elements (NAME REGEXP FUNCTION) used for plumbing.
 
 Each rule specifies the FUNCTION that should be called whenever the user is
@@ -120,6 +122,29 @@ an error message."
             (fboundp symbol))
         (describe-symbol symbol)
       (message "Unbound symbol `%s'" symbol))))
+
+(defun plumber-find-file (input)
+  (save-match-data
+    (string-match (rx (opt (group-n 1 (one-or-more digit)) ":")
+                      (opt (group-n 2 (one-or-more digit)) ":")
+                      (group-n 3 (one-or-more anything))
+                      eol)
+                  input)
+    (let* ((match1 (match-string 1 input))
+           (target-line (and match1 (string-to-number match1)))
+           (match2 (match-string 2 input))
+           (target-col (and match2 (string-to-number match2)))
+           (target-file (match-string 3 input))
+           (target-buffer (find-file target-file)))
+      ;; TODO: When is the `target-buffer' not selected?
+      (switch-to-buffer target-buffer)
+      (if target-line
+          ;; NOTE: The `goto-line' function can only be used interactively
+          (progn
+            (goto-char (point-min))
+            (forward-line (1- target-line))))
+      (if target-col
+          (move-to-column target-col)))))
 
 ;;------------------------------------------------------------------------------
 ;; Auxiliary functions
