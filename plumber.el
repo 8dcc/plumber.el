@@ -223,7 +223,7 @@ obtaining the TEXT argument."
   (interactive (list (plumber-get-user-text)))
   (let ((func (plumber-func-from-text text)))
     (unless func
-      (error "No plumber rule matches the specified text"))
+      (user-error "No plumber rule matches the specified text"))
     (funcall func text)))
 
 ;;;###autoload
