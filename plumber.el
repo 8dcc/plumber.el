@@ -79,14 +79,14 @@
   "List of elements (NAME REGEXP FUNCTION) used for plumbing.
 
 Each rule specifies the FUNCTION that should be called whenever the user is
-plumbing a text that matches REGEXP. The function should receive one string
-argument: the text being plumbed. The NAME should be a short description, used
+plumbing a text that matches REGEXP.  The function should receive one string
+argument: the text being plumbed.  The NAME should be a short description, used
 by the `plumber-plumb-as' function.
 
 The regular expressions will be checked in order, therefore expressions at the
-start of the list should be more strict than the ones at the end. Also note that
-there is no need to wrap the regular expressions in \"^...$\", since this is
-done internally by `plumber-plumb'.
+start of the list should be more strict than the ones at the end.  Also note
+that there is no need to wrap the regular expressions in \"^...$\", since this
+is done internally by `plumber-plumb'.
 
 Also note that, even though `plumber-plumb' ensures that the input matches the
 REGEXP, `plumber-plumb-as' completely ignores it. This means that the specified
@@ -96,10 +96,10 @@ expect any specific format."
 
 ;;;###autoload
 (defvar plumber-fill-text-prompt t
-  "If non-nil, set the initial input of the text prompt to the thing at point,
-rather than the default value.
+  "Set the initial input of the text prompt to the thing at point.
+Rather than the default value.
 
-Used by `plumber-get-user-text'. The \"thing at point\" is obtained with
+Used by `plumber-get-user-text'.  The \"thing at point\" is obtained with
 `plumber--thing-at-point'.
 
 For more information on the differences between \"initial input\" and \"default
@@ -112,8 +112,8 @@ value\", see `read-string'.")
 ;; Functions used in `plumber-rules', can be overwritten
 
 (defun plumber-describe-symbol (input)
-  "Remove quotes from symbol, and describe it as long as it exists. If not, show
-an error message."
+  "Convert string INPUT to a symbol, and describe it as long as it exists.
+If it doesn't exist, show an error message."
   (save-match-data
     (if (string-match "^`\\(.*\\)'$" input)
         (setq input (match-string 1 input))))
@@ -124,6 +124,19 @@ an error message."
       (message "Unbound symbol `%s'" symbol))))
 
 (defun plumber-find-file (input)
+  "Open a file, optionally at a specific line and column.
+
+The INPUT should have the following format:
+
+  [ROW:][COL:]FILENAME
+
+Where ROW and COL are valid inputs for `string-to-number', and FILENAME is a
+valid input for `find-file'.
+
+By default, this function is used in `plumber-rules', since it allows the user
+to plumb output from *grep* or *compilation* buffers.
+
+Internally, the function uses `goto-char', `forward-line' and `move-to-column'."
   (save-match-data
     (string-match (rx (opt (group-n 1 (one-or-more digit)) ":")
                       (opt (group-n 2 (one-or-more digit)) ":")
@@ -147,8 +160,10 @@ an error message."
 ;; Auxiliary functions
 
 (defun plumber--thing-at-point ()
-  "Get a string representing the next space-delimited word. This function only
-considers spaces, tabs and newlines as \"spaces\"."
+  "Get a string representing the next blank-delimited word.
+
+A character is blank if it matches either the beginning of a line, or the regexp
+\"[[:blank:]]\". For more information, see Info node `(elisp)Char Classes'."
   (ignore-errors
     (save-excursion
       (re-search-backward "^\\|[[:blank:]]")
@@ -158,8 +173,8 @@ considers spaces, tabs and newlines as \"spaces\"."
         (buffer-substring-no-properties thing-start thing-end)))))
 
 (defun plumber--string-match-p (regexp string)
-  "Return true if STRING matches the REGEXP, from start to end. Uses
-`string-match-p'."
+  "Return t if STRING matches the REGEXP, from start to end.
+Uses `string-match-p'."
   (string-match-p (concat "^" regexp "$") string))
 
 ;;------------------------------------------------------------------------------
@@ -168,7 +183,7 @@ considers spaces, tabs and newlines as \"spaces\"."
 (defun plumber-get-user-text ()
   "Get a string for plumbing.
 
-If the region is active, use the region text. Otherwise, prompt for a string."
+If the region is active, use the region text.  Otherwise, prompt for a string."
   (if (region-active-p)
       (buffer-substring-no-properties (region-beginning) (region-end))
     (let ((thing-at-point (plumber--thing-at-point)))
@@ -185,8 +200,8 @@ If the region is active, use the region text. Otherwise, prompt for a string."
 ;; Functions for searching in `plumber-rules'
 
 (defun plumber-func-from-text (text)
-  "Get the first function in `plumber-rules' whose associated regexp matches
-TEXT. Returns nil if no match was found."
+  "Get the first function in `plumber-rules' whose regexp matches TEXT.
+Returns nil if no match was found."
   (let ((match (seq-find
                 ;; Find first matching regexp in `plumber-rules'.
                 (lambda (element)
@@ -198,8 +213,8 @@ TEXT. Returns nil if no match was found."
       nil)))
 
 (defun plumber-func-from-rule-name (name)
-  "Get the function associated to NAME in `plumber-rules'. Returns nil if no
-match was found."
+  "Get the function associated to NAME in `plumber-rules'.
+Returns nil if no match was found."
   (let ((match (assoc name plumber-rules)))
     (if match
         (caddr match)
@@ -212,10 +227,10 @@ match was found."
 (defun plumber-plumb (text)
   "Plumb the specified TEXT.
 
-The plumbing functionality is based on Plan9's plumber. In Emacs, it simply
-allows you to call a different function depending on the format of the TEXT. It
+The plumbing functionality is based on Plan9's plumber.  In Emacs, it simply
+allows you to call a different function depending on the format of the TEXT.  It
 checks the format against the regular expressions specified in the
-`plumber-rules' alist. Alternatively, the `plumber-plumb-as' function can also
+`plumber-rules' alist.  Alternatively, the `plumber-plumb-as' function can also
 be used for manually specifying the plumber rule.
 
 When called interactively, the `plumber-get-user-text' function is used for
