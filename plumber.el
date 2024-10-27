@@ -113,7 +113,7 @@ value\", see `read-string'.")
 
 (defun plumber-describe-symbol (input)
   "Convert string INPUT to a symbol, and describe it as long as it exists.
-If it doesn't exist, show an error message."
+If it doesn't exist, show an user error."
   (save-match-data
     (if (string-match "^`\\(.*\\)'$" input)
         (setq input (match-string 1 input))))
@@ -121,7 +121,7 @@ If it doesn't exist, show an error message."
     (if (or (boundp symbol)
             (fboundp symbol))
         (describe-symbol symbol)
-      (message "Unbound symbol `%s'" symbol))))
+      (user-error "Unbound symbol `%s'" symbol))))
 
 (defun plumber-find-file (input)
   "Open a file, optionally at a specific line and column.
