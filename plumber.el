@@ -37,7 +37,6 @@
   :group 'convenience
   :prefix "plumber-")
 
-;;;###autoload
 (defcustom plumber-rules
   `(("URL"
      "https?://.+"
@@ -94,7 +93,6 @@ FUNCTION is guaranteed to receive a string as its argument, but it should not
 expect any specific format."
   :type '(alist :key-type string :value-type (list string function)))
 
-;;;###autoload
 (defvar plumber-fill-text-prompt t
   "Set the initial input of the text prompt to the thing at point.
 Rather than the default value.
