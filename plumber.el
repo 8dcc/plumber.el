@@ -93,7 +93,7 @@ FUNCTION is guaranteed to receive a string as its argument, but it should not
 expect any specific format."
   :type '(alist :key-type string :value-type (list string function)))
 
-(defvar plumber-fill-text-prompt t
+(defcustom plumber-fill-text-prompt t
   "Set the initial input of the text prompt to the thing at point.
 Rather than the default value.
 
@@ -101,7 +101,8 @@ Used by `plumber-get-user-text'.  The \"thing at point\" is obtained with
 `plumber--thing-at-point'.
 
 For more information on the differences between \"initial input\" and \"default
-value\", see `read-string'.")
+value\", see `read-string'."
+  :type 'boolean)
 
 (defvar plumber-history nil
   "History of plumbed strings.")
