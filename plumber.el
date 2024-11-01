@@ -91,7 +91,7 @@ Also note that, even though `plumber-plumb' ensures that the input matches the
 REGEXP, `plumber-plumb-as' completely ignores it. This means that the specified
 FUNCTION is guaranteed to receive a string as its argument, but it should not
 expect any specific format."
-  :type '(alist :key-type string :value-type (list string function)))
+  :type '(alist :key-type string :value-type (list regexp function)))
 
 (defcustom plumber-fill-text-prompt t
   "Set the initial input of the text prompt to the thing at point.
