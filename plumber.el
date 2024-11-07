@@ -152,13 +152,12 @@ Internally, the function uses `goto-char', `forward-line' and `move-to-column'."
            (target-col (and match2 (string-to-number match2)))
            (target-file (match-string 3 input)))
       (find-file target-file)
-      (if target-line
-          ;; NOTE: The `goto-line' function can only be used interactively
-          (progn
-            (goto-char (point-min))
-            (forward-line (1- target-line))))
-      (if target-col
-          (move-to-column target-col)))))
+      (when target-line
+        ;; NOTE: The `goto-line' function can only be used interactively
+        (goto-char (point-min))
+        (forward-line (1- target-line)))
+      (when target-col
+        (move-to-column target-col)))))
 
 ;;------------------------------------------------------------------------------
 ;; Auxiliary functions
