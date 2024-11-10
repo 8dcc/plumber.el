@@ -21,22 +21,23 @@ You can plumb text with the =plumber-plumb= function, which tries to match the
 supplied text against a list of regular expressions; and the =plumber-plumb-as=
 function, which lets the user specify the data type.
 
-Both of these functions check their inputs against the =plumber-alist= variable,
+Both of these functions check their inputs against the =plumber-rules= variable,
 which has the following format:
 
 #+begin_src emacs-lisp
-((TYPE REGEXP FUNC)
+((NAME REGEXP FUNCTION)
  ...
- (TYPE REGEXP FUNC))
+ (NAME REGEXP FUNCTION))
 #+end_src
 
-Where =type= is a short description of the entry, =regexp= is the regular expression
-used by =plumber-plumb=, and =func= is the function to be called by =plumber-plumb=
-and =plumber-plumb-as= if a match is found.
+Where =name= is a short description of the entry (primarily used by
+=plumber-plumb-as=), =regexp= is the regular expression used by =plumber-plumb=, and
+=function= is the function to be called by both =plumber-plumb= and =plumber-plumb-as=
+if a match is found.
 
 By default, both functions use the region contents, or they ask the for the text
-to plumb. The =plumber-plumb-as= function also asks the user for a type in the
-=plumber-alist= list.
+to plumb. The =plumber-plumb-as= function also asks the user for the specific rule
+in the =plumber-rule= list, using the =name= field for completion.
 
 * Installing
 
