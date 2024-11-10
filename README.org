@@ -54,3 +54,11 @@ Or, if you are using [[https://github.com/radian-software/straight.el][straight.
 (straight-use-package
  '(plumber :type git :host github :repo "8dcc/plumber.el"))
 #+end_src
+
+* Alternatives
+
+Some alternatives to this package:
+
+- The built-in =find-file-at-point= function; although less general.
+- Possibly =embark-dwim=, from the [[https://github.com/oantolin/embark][embark]] package; although I haven't personally
+  tried it.
