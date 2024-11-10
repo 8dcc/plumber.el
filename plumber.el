@@ -49,7 +49,7 @@
           (one-or-more (any alnum ?-))
           "."
           (one-or-more (any alnum ?- ?.)))
-     compose-mail)
+     browse-url-mail)
     ("Man page"
      ,(rx (one-or-more (any alnum punct))
           "(" digit ")")
