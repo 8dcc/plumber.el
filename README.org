@@ -41,14 +41,27 @@ in the =plumber-rule= list, using the =name= field for completion.
 
 * Installing
 
-This package is not currently on Melpa. You can install it with
-=package-vc-install=:
+This package is available in [[https://melpa.org/][Melpa]]. You can install it with
+=M-x package-install RET doom-modeline RET=, and then =require= it:
+
+#+begin_src emacs-lisp
+(require 'plumber)
+#+end_src
+
+Or with =use-package=:
+
+#+begin_src emacs-lisp
+(use-package plumber)
+#+end_src
+
+Alternatively, you can install it with =package-vc-install=:
 
 #+begin_src emacs-lisp
 (package-vc-install "https://github.com/8dcc/plumber.el")
 #+end_src
 
-Or, if you are using [[https://github.com/radian-software/straight.el][straight.el]], you can install it using =straight-use-package=:
+Lastly, if you are using [[https://github.com/radian-software/straight.el][straight.el]], you can specify the recipe with
+=straight-use-package=:
 
 #+begin_src emacs-lisp
 (straight-use-package
