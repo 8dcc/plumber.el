@@ -3,7 +3,7 @@
 #+OPTIONS: toc:2
 #+STARTUP: nofold
 
-*Run different commands depending on the text format.*
+*Run different commands depending on the selected text.*
 
 This simple package is an Emacs port of my [[https://github.com/8dcc/plumber][plumber]] command, inspired by the
 [[https://st.suckless.org/patches/right_click_to_plumb/][right click to plumb]] patch for the [[https://st.suckless.org/][Simple Terminal]], which was inspired by
