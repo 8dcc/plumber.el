@@ -42,7 +42,7 @@ in the =plumber-rule= list, using the =name= field for completion.
 * Installing
 
 This package is available in [[https://melpa.org/][Melpa]]. You can install it with
-=M-x package-install RET doom-modeline RET=, and then =require= it:
+=M-x package-install RET plumber RET=, and then =require= it:
 
 #+begin_src emacs-lisp
 (require 'plumber)
