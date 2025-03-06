@@ -187,7 +187,7 @@ Uses `string-match-p'."
   "Get a string for plumbing.
 
 If the region is active, use the region text.  Otherwise, prompt for a string."
-  (if (region-active-p)
+  (if (use-region-p)
       (buffer-substring-no-properties (region-beginning) (region-end))
     (let ((thing-at-point (plumber--thing-at-point)))
       (if plumber-fill-text-prompt
