@@ -149,16 +149,18 @@ Internally, the function uses `goto-char', `forward-line' and `move-to-column'."
                   input)
     (let* ((target-file (match-string 1 input))
            (match2 (match-string 2 input))
-           (target-line (and match2 (string-to-number match2)))
+           (target-row (and match2 (string-to-number match2)))
            (match3 (match-string 3 input))
            (target-col (and match3 (string-to-number match3))))
       (find-file target-file)
-      (when target-line
-        ;; NOTE: The `goto-line' function can only be used interactively
+      (when target-row
+        ;; NOTE: The `goto-line' function can only be used interactively.
         (goto-char (point-min))
-        (forward-line (1- target-line)))
+        (forward-line (1- target-row)))
       (when target-col
-        (move-to-column target-col)))))
+        ;; We subtract one from the target column because most tools use
+        ;; one-indexed coordinates, but Emacs doesn't.
+        (move-to-column (1- target-col))))))
 
 ;;------------------------------------------------------------------------------
 ;; Auxiliary functions
