@@ -71,11 +71,12 @@
      (lambda (input)
        (message "Result: %s" (calc-eval input))))
     ("File"
-     ,(rx (opt (one-or-more digit) ":") ; Line
-          (opt (one-or-more digit) ":") ; Column
-          (one-or-more                  ; Characters of a path
-           (or (any alnum ?/ ?~ ?. ?_ ?-)
-               "\\ ")))
+     ,(rx (one-or-more
+           (or (any alnum ?/ ?~ ?. ?_ ?-)     ; Path
+               "\\ "))                        ; Optional escaped espaces
+          (opt ":" (one-or-more digit)        ; Column
+               (opt ":" (one-or-more digit))  ; Line
+               (zero-or-more print)))         ; Remaining text
      plumber-find-file))
   "List of elements (NAME REGEXP FUNCTION) used for plumbing.
 
@@ -132,7 +133,7 @@ If it doesn't exist, show an user error."
 
 The INPUT should have the following format:
 
-  [ROW:][COL:]FILENAME
+  FILENAME[:ROW][:COL]
 
 Where ROW and COL are valid inputs for `string-to-number', and FILENAME is a
 valid input for `find-file'.
@@ -142,15 +143,15 @@ to plumb output from *grep* or *compilation* buffers.
 
 Internally, the function uses `goto-char', `forward-line' and `move-to-column'."
   (save-match-data
-    (string-match (rx (opt (group-n 1 (one-or-more digit)) ":")
-                      (opt (group-n 2 (one-or-more digit)) ":")
-                      (group-n 3 (one-or-more not-newline)))
+    (string-match (rx (group-n 1 (one-or-more (not (any "\n" ":"))))
+                      (opt ":" (group-n 2 (one-or-more digit)))
+                      (opt ":" (group-n 3 (one-or-more digit))))
                   input)
-    (let* ((match1 (match-string 1 input))
-           (target-line (and match1 (string-to-number match1)))
+    (let* ((target-file (match-string 1 input))
            (match2 (match-string 2 input))
-           (target-col (and match2 (string-to-number match2)))
-           (target-file (match-string 3 input)))
+           (target-line (and match2 (string-to-number match2)))
+           (match3 (match-string 3 input))
+           (target-col (and match3 (string-to-number match3))))
       (find-file target-file)
       (when target-line
         ;; NOTE: The `goto-line' function can only be used interactively
